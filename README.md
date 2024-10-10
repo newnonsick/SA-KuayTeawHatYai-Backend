@@ -38,7 +38,7 @@ pip install -r requirements.txt
 ```
 
 ### 4. Set Up Environment Variables
-#### Create a `.env` file in the root of your project and add your PostgreSQL database credentials:
+Create a `.env` file in the root of your project and add your PostgreSQL database credentials:
 ```bash
 POSTGRES_USER=your_postgres_user
 POSTGRES_PASSWORD=your_postgres_password
@@ -48,25 +48,25 @@ POSTGRES_PORT=your_postgres_port
 ```
 
 ### 5. Set Up the Database
-#### Make sure your PostgreSQL database is running, then create the database specified in the `.env` file:
+Make sure your PostgreSQL database is running, then create the database specified in the `.env` file:
 ```bash
 psql -U your_postgres_user -c "CREATE DATABASE your_database_name;"
 ```
 
 ### 6. Run Database Migrations
-#### To apply the SQL migration scripts located in the `migrations/` folder, run the following command:
+To apply the SQL migration scripts located in the `migrations/` folder, run the following command:
 ```bash
 python migrate.py
 ```
-#### This will execute all the SQL scripts in the `migrations` folder.
+This will execute all the SQL scripts in the `migrations` folder.
 
 ## Installation
 
-#### To start the Flask server along with Socket.IO:
+To start the Flask server along with Socket.IO:
 ```bash
 python run.py
 ```
-#### By default, the application will run on `http://localhost:5000/`
+By default, the application will run on `http://localhost:5000/`
 
 ## Project Structure
 
@@ -92,5 +92,5 @@ python run.py
 
 ## License
 
-#### This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
