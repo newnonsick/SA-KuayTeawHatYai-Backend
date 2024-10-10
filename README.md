@@ -38,7 +38,7 @@ pip install -r requirements.txt
 ```
 
 ### 4. Set Up Environment Variables
-#### Create a .env file in the root of your project and add your PostgreSQL database credentials:
+#### Create a `.env` file in the root of your project and add your PostgreSQL database credentials:
 ```bash
 POSTGRES_USER=your_postgres_user
 POSTGRES_PASSWORD=your_postgres_password
@@ -56,9 +56,9 @@ psql -U your_postgres_user -c "CREATE DATABASE your_database_name;"
 ### 6. Run Database Migrations
 #### To apply the SQL migration scripts located in the `migrations/` folder, run the following command:
 ```bash
-psql -U your_postgres_user -c "CREATE DATABASE your_database_name;"
+python migrate.py
 ```
-#### This will execute all the SQL scripts in the migrations folder.
+#### This will execute all the SQL scripts in the `migrations` folder.
 
 ## Installation
 
@@ -66,7 +66,7 @@ psql -U your_postgres_user -c "CREATE DATABASE your_database_name;"
 ```bash
 python run.py
 ```
-#### By default, the application will run on http://localhost:5000/
+#### By default, the application will run on `http://localhost:5000/`
 
 ## Project Structure
 
