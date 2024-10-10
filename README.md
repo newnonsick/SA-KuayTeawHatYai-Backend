@@ -22,8 +22,8 @@ Before you begin, ensure you have the following installed on your local machine:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-repo-name/backend-project.git
-cd backend-project
+git clone https://github.com/KuayTeawHatYai/KuayTeawHatYai-Backend.git
+cd KuayTeawHatYai-Backend
 ```
 
 ### 2. Set Up a Virtual Environment (Optional but recommended)
