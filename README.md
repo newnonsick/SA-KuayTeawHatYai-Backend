@@ -76,7 +76,10 @@ By default, the application will run on `http://localhost:5000/`
 ├── /app
 │   ├── __init__.py          # Initialize Flask and Socket.IO
 │   ├── db.py                # Database connection handling
-│   ├── routes.py            # Define your application routes here
+│   ├── /routes              # Contains route handlers for API endpoints
+│   │   ├──
+│   │   ├──
+│   │   └──
 │   ├── socket_service.py    # Socket.IO event handlers
 │   └── config.py            # Configuration settings (e.g., environment)
 │
