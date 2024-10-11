@@ -10,12 +10,47 @@ def init_db(app):
         database=app.config['POSTGRES_DB']
     )
 
-def execute_query(query, params=None):
+#use with INSERT, UPDATE, DELETE queries
+def execute_command(query, params=None):
     conn = current_app.db_connection
     cursor = conn.cursor()
-    cursor.execute(query, params)
-    result = cursor.fetchall()
-    conn.commit()
-    cursor.close()
+    result = None
+    try:
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+
+        conn.commit()
+        result = "success"
+    except Exception as e:
+        print(f"Error executing command: {e}")
+        conn.rollback()
+        result = "error"
+    finally:
+        cursor.close()
+
     return result
+
+#use with SELECT queries
+def fetch_query(query, params=None):
+    conn = current_app.db_connection
+    cursor = conn.cursor()
+    result = None
+    try:
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+
+        result = cursor.fetchall()
+    except Exception as e:
+        print(f"Error fetching query: {e}")
+        result = "error"
+    finally:
+        cursor.close()
+
+    return result
+
+
 
