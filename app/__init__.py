@@ -16,18 +16,15 @@ def create_app():
     from .routes.index import index_blueprint
     app.register_blueprint(index_blueprint)
 
-    from .routes.error_handle import error_blueprint
-    app.register_blueprint(error_blueprint)
-
     from .routes.menus import menus_blueprint
     app.register_blueprint(menus_blueprint)
 
     from .routes.ingredients import ingredients_blueprint
     app.register_blueprint(ingredients_blueprint)
 
-
-
     # Initialize SocketIO
     socketio.init_app(app)
+
+    from . import socket_service
 
     return app

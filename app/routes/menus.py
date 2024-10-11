@@ -1,3 +1,4 @@
+from http.client import HTTPException
 from flask import Blueprint, jsonify, request
 from ..db import execute_command, fetch_query
 

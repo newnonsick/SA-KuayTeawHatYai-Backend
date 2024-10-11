@@ -5,6 +5,11 @@ from . import socketio
 def handle_connect():
     emit('response', {'message': 'Connected to server'})
 
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+
 @socketio.on('my_event')
 def handle_my_custom_event(json):
     print(f'Received data: {json}')
