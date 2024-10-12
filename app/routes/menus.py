@@ -1,4 +1,3 @@
-from http.client import HTTPException
 from flask import Blueprint, jsonify, request
 from ..db import execute_command, fetch_query
 
@@ -22,7 +21,7 @@ def validate_menu_item(data):
     
     return name, category, price, image_url
 
-def check_duplicate_menu(name):
+def isMenuExist(name):
     """Check for duplicate menu items."""
     query = "SELECT * FROM MENU WHERE name = %s"
     
@@ -36,7 +35,7 @@ def add_menu_item():
     data = request.get_json()
     name, category, price, image_url = validate_menu_item(data)
 
-    if check_duplicate_menu(name):
+    if isMenuExist(name):
         raise ValueError("Menu item already exists.")
     
     query = "INSERT INTO MENU (name, category, price, image_url) VALUES (%s, %s, %s, %s)"
@@ -82,7 +81,7 @@ def update_menu_item():
     data = request.get_json()
     name, category, price, image_url = validate_menu_item(data)
 
-    if not check_duplicate_menu(name):
+    if not isMenuExist(name):
         raise ValueError("Menu item does not exist.")
     
     query = "UPDATE MENU SET category = %s, price = %s, image_url = %s WHERE name = %s"
@@ -96,17 +95,110 @@ def get_menu_item_ingredients():
     if not name:
         raise ValueError("Missing required fields. Please provide a menu item name.")
    
-    query = "SELECT i.name, i.is_available, i.image_URL, i.ingredient_type FROM INGREDIENT i JOIN MENU_INGREDIENT mi ON i.name = mi.ingredient_name WHERE mi.menu_name = %s"
+    query = """
+        SELECT i.name, i.is_available, i.image_URL, i.ingredient_type 
+        FROM INGREDIENT i 
+        JOIN MENU_INGREDIENT mi ON i.name = mi.ingredient_name 
+        WHERE mi.menu_name = %s
+    """
     result = fetch_query(query, (name,))
 
-    ingredients = [{
-        "name": item[0],
-        "is_available": item[1],
-        "image_URL": item[2],
-        "ingredient_type": item[3]
-    } for item in result]
+    ingredients = {}
+    for item in result:
+        ingredient_type = item[3]
+        if ingredient_type not in ingredients:
+            ingredients[ingredient_type] = []
 
-    return jsonify({"code": "success", "ingredients": ingredients})
+        ingredients[ingredient_type].append({
+            "name": item[0],
+            "is_available": item[1],
+            "image_url": item[2]
+        })
+
+    formatted_ingredients = [
+        {
+            "type": ingredient_type,
+            "options": ingredient_list
+        }
+        for ingredient_type, ingredient_list in ingredients.items()
+    ]
+
+    return jsonify({
+        "code": "success",
+        "ingredients": formatted_ingredients
+    })
+
+@menus_blueprint.route('/menu/ingredients-not-in-menu', methods=['GET'])
+def get_ingredients_not_in_menu():
+    name = request.args.get("name")
+    if not name:
+        raise ValueError("Missing required fields. Please provide a menu item name.")
     
-    # 
+    query = """
+        SELECT i.name, i.is_available, i.image_URL, i.ingredient_type
+        FROM INGREDIENT i
+        WHERE i.name NOT IN (
+            SELECT mi.ingredient_name
+            FROM MENU_INGREDIENT mi
+            WHERE mi.menu_name = %s
+        )
+    """
+    result = fetch_query(query, (name,))
+
+    ingredients = {}
+    for item in result:
+        ingredient_type = item[3]
+        if ingredient_type not in ingredients:
+            ingredients[ingredient_type] = []
+
+        ingredients[ingredient_type].append({
+            "name": item[0],
+            "is_available": item[1],
+            "image_url": item[2]
+        })
+
+    formatted_ingredients = [
+        {
+            "type": ingredient_type,
+            "options": ingredient_list
+        }
+        for ingredient_type, ingredient_list in ingredients.items()
+    ]
+
+    return jsonify({
+        "code": "success",
+        "ingredients": formatted_ingredients
+    })
+
+@menus_blueprint.route('/menu/add-ingredient', methods=['POST'])
+def add_ingredients_to_menu():
+    data = request.get_json()
+    menu_name = data.get("menu_name")
+    ingredients = data.get("ingredients")
+
+    if not all([menu_name, ingredients]):
+        raise ValueError("Missing required fields.")
+    
+    if not isMenuExist(menu_name):
+        raise ValueError(f"Menu item {menu_name} does not exist.")
+    
+    for ingredient in ingredients:
+        
+        # Check if ingredient exists
+        query = "SELECT * FROM INGREDIENT WHERE name = %s"
+        result = fetch_query(query, (ingredient,))
+        if not result:
+            raise ValueError(f"Ingredient {ingredient} does not exist.")
+        
+        # Check if ingredient is already added to the menu
+        query = "SELECT * FROM MENU_INGREDIENT WHERE menu_name = %s AND ingredient_name = %s"
+        result = fetch_query(query, (menu_name, ingredient))
+        if result:
+            raise ValueError(f"Ingredient {ingredient} is already added to the menu.")
+
+        query = "INSERT INTO MENU_INGREDIENT (menu_name, ingredient_name) VALUES (%s, %s)"
+        result = execute_command(query, (menu_name, ingredient))
+    
+    return jsonify({"code": "success", "message": "Ingredients added to menu successfully."})
+
     

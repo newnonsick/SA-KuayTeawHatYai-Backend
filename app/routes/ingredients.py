@@ -26,7 +26,7 @@ def validate_ingredient(data):
     
     return name, is_available, image_url, ingredient_type
 
-def check_duplicate_ingredient(name):
+def isIngredientExist(name):
     """Check for duplicate ingredients."""
     query = "SELECT * FROM INGREDIENT WHERE name = %s"
     result = fetch_query(query, (name,))
@@ -55,7 +55,7 @@ def add_ingredients():
     data = request.get_json()
     name, is_available, image_url, ingredient_type = validate_ingredient(data)
 
-    if check_duplicate_ingredient(name):
+    if isIngredientExist(name):
         raise ValueError("Ingredient already exists.")
     
     query = "INSERT INTO INGREDIENT (name, is_available, image_url, ingredient_type) VALUES (%s, %s, %s, %s)"
@@ -72,7 +72,7 @@ def delete_ingredients():
     if not name:
         raise ValueError("Missing required fields.")
     
-    if not check_duplicate_ingredient(name):
+    if not isIngredientExist(name):
         raise ValueError("Ingredient does not exist.")
     
     query = "DELETE FROM INGREDIENT WHERE name = %s"
@@ -86,7 +86,7 @@ def update_ingredients():
     data = request.get_json()
     name, is_available, image_url, ingredient_type = validate_ingredient(data)
 
-    if not check_duplicate_ingredient(name):
+    if not isIngredientExist(name):
         raise ValueError("Ingredient does not exist.")
     
     query = "UPDATE INGREDIENT SET is_available = %s, image_url = %s, ingredient_type = %s WHERE name = %s "
