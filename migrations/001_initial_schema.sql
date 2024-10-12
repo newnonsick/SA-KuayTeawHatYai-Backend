@@ -16,18 +16,20 @@ CREATE TABLE IF NOT EXISTS TABLES (
     table_number VARCHAR(10) PRIMARY KEY
 );
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS ORDERS (
-    order_id SERIAL PRIMARY KEY,
+    order_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_status VARCHAR(255),
     order_date DATE NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    table_number VARCHAR(10) REFERENCES TABLES(table_number)
+    table_number VARCHAR(10) REFERENCES TABLES(table_number) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS ORDER_ITEM (
-    order_item_id SERIAL PRIMARY KEY,
-    menu_name VARCHAR(255) REFERENCES MENU(name),
-    order_id INT REFERENCES ORDERS(order_id),
+    order_item_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    menu_name VARCHAR(255) REFERENCES MENU(name) ON DELETE CASCADE,
+    order_id UUID REFERENCES ORDERS(order_id) ON DELETE CASCADE,
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     portions VARCHAR(255),
@@ -35,13 +37,13 @@ CREATE TABLE IF NOT EXISTS ORDER_ITEM (
 );
 
 CREATE TABLE IF NOT EXISTS ORDER_INGREDIENT (
-    order_ingredient_id SERIAL PRIMARY KEY,
-    order_item_id INT REFERENCES ORDER_ITEM(order_item_id),
-    ingredient_name VARCHAR(255) REFERENCES INGREDIENT(name)
+    order_ingredient_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_item_id UUID REFERENCES ORDER_ITEM(order_item_id) ON DELETE CASCADE,
+    ingredient_name VARCHAR(255) REFERENCES INGREDIENT(name) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS MENU_INGREDIENT (
-    menu_name VARCHAR(255) REFERENCES MENU(name),
-    ingredient_name VARCHAR(255) REFERENCES INGREDIENT(name),
+    menu_name VARCHAR(255) REFERENCES MENU(name) ON DELETE CASCADE,
+    ingredient_name VARCHAR(255) REFERENCES INGREDIENT(name) ON DELETE CASCADE,
     PRIMARY KEY (menu_name, ingredient_name)
 );
