@@ -72,6 +72,9 @@ def delete_ingredients():
     if not name:
         raise ValueError("Missing required fields.")
     
+    if not check_duplicate_ingredient(name):
+        raise ValueError("Ingredient does not exist.")
+    
     query = "DELETE FROM INGREDIENT WHERE name = %s"
     result = execute_command(query, (name,))
     
@@ -86,8 +89,8 @@ def update_ingredients():
     if not check_duplicate_ingredient(name):
         raise ValueError("Ingredient does not exist.")
     
-    query = "UPDATE INGREDIENT WHERE name = %s SET is_available = %s, image_url = %s, ingredient_type = %s"
-    result = execute_command(query, (name, is_available, image_url, ingredient_type))
+    query = "UPDATE INGREDIENT SET is_available = %s, image_url = %s, ingredient_type = %s WHERE name = %s "
+    result = execute_command(query, (is_available, image_url, ingredient_type, name))
     
     return jsonify({"code": "success", "message": "Ingredient updated successfully."})
 

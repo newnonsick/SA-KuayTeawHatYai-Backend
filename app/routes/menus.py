@@ -94,7 +94,7 @@ def update_menu_item():
 def get_menu_item_ingredients():
     name = request.args.get("name")
     if not name:
-        raise ValueError("Missing required fields.")
+        raise ValueError("Missing required fields. Please provide a menu item name.")
    
     query = "SELECT i.name, i.is_available, i.image_URL, i.ingredient_type FROM INGREDIENT i JOIN MENU_INGREDIENT mi ON i.name = mi.ingredient_name WHERE mi.menu_name = %s"
     result = fetch_query(query, (name,))
