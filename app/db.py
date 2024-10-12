@@ -24,9 +24,8 @@ def execute_command(query, params=None):
         conn.commit()
         result = "success"
     except Exception as e:
-        print(f"Error executing command: {e}")
         conn.rollback()
-        result = "error"
+        raise e
     finally:
         cursor.close()
 
@@ -45,8 +44,7 @@ def fetch_query(query, params=None):
 
         result = cursor.fetchall()
     except Exception as e:
-        print(f"Error fetching query: {e}")
-        result = "error"
+        raise e
     finally:
         cursor.close()
 

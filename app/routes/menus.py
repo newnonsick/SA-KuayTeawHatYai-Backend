@@ -25,9 +25,9 @@ def validate_menu_item(data):
 def check_duplicate_menu(name):
     """Check for duplicate menu items."""
     query = "SELECT * FROM menu WHERE name = %s"
+    
     result = fetch_query(query, (name,))
-    if result == "error":
-        raise Exception("Error fetching data.")
+
     return len(result) > 0
 
 
@@ -41,9 +41,6 @@ def add_menu_item():
     
     query = "INSERT INTO menu (name, category, price, image_url) VALUES (%s, %s, %s, %s)"
     result = execute_command(query, (name, category, price, image_url))
-    
-    if result == "error":
-        raise Exception("Error inserting data.")
     
     return jsonify({"code": "success", "message": "Menu item added successfully."})
 
@@ -59,9 +56,6 @@ def delete_menu_item():
     query = "DELETE FROM menu WHERE name = %s"
     result = execute_command(query, (name,))
     
-    if result == "error":
-        raise Exception("Error deleting data.")
-    
     return jsonify({"code": "success", "message": "Menu item deleted successfully."})
 
 
@@ -72,9 +66,6 @@ def get_menu_items():
     params = (category,) if category else ()
 
     result = fetch_query(query, params)
-
-    if result == "error":
-        raise Exception("Error fetching data.")
     
     menu_items = [{
         "name": item[0],
@@ -96,8 +87,5 @@ def update_menu_item():
     
     query = "UPDATE menu SET category = %s, price = %s, image_url = %s WHERE name = %s"
     result = execute_command(query, (category, price, image_url, name))
-    
-    if result == "error":
-        raise Exception("Error updating data.")
     
     return jsonify({"code": "success", "message": "Menu item updated successfully."})

@@ -30,8 +30,7 @@ def check_duplicate_ingredient(name):
     """Check for duplicate ingredients."""
     query = "SELECT * FROM ingredients WHERE name = %s"
     result = fetch_query(query, (name,))
-    if result == "error":
-        raise Exception("Error fetching data.")
+
     return len(result) > 0
 
 
@@ -40,9 +39,6 @@ def check_duplicate_ingredient(name):
 def get_ingredients():
     query = "SELECT * FROM ingredients"
     result = fetch_query(query)
-
-    if result == "error":
-        raise Exception("Error fetching data.")
     
     ingredients = [{
         "name": item[0],
@@ -64,9 +60,6 @@ def add_ingredients():
     
     query = "INSERT INTO ingredients (name, is_available, image_url, ingredient_type) VALUES (%s, %s, %s, %s)"
     result = execute_command(query, (name, is_available, image_url, ingredient_type))
-
-    if result == "error":
-        raise Exception("Error inserting data.")
     
     return jsonify({"code": "success", "message": "Ingredient added successfully."})
 
@@ -82,9 +75,6 @@ def delete_ingredients():
     query = "DELETE FROM ingredients WHERE name = %s"
     result = execute_command(query, (name,))
     
-    if result == "error":
-        raise Exception("Error deleting data.")
-    
     return jsonify({"code": "success", "message": "Ingredient deleted successfully."})
 
 
@@ -98,9 +88,6 @@ def update_ingredients():
     
     query = "UPDATE ingredients WHERE name = %s SET is_available = %s, image_url = %s, ingredient_type = %s"
     result = execute_command(query, (name, is_available, image_url, ingredient_type))
-    
-    if result == "error":
-        raise Exception("Error updating data.")
     
     return jsonify({"code": "success", "message": "Ingredient updated successfully."})
 
