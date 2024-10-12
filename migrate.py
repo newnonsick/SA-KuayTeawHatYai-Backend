@@ -26,6 +26,8 @@ def run_migration(script_path):
     with open(script_path, 'r') as file:
         sql_script = file.read()
 
+    print(f"Executing migration {script_path}...")
+
     cursor.execute(sql_script)
     print(f"Migration {script_path} executed successfully.")
 

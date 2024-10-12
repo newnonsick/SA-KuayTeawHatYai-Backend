@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS ORDERS (
 CREATE TABLE IF NOT EXISTS ORDER_ITEM (
     order_item_id SERIAL PRIMARY KEY,
     menu_name VARCHAR(255) REFERENCES MENU(name),
+    order_id INT REFERENCES ORDERS(order_id),
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     portions VARCHAR(255),

@@ -24,7 +24,7 @@ def validate_menu_item(data):
 
 def check_duplicate_menu(name):
     """Check for duplicate menu items."""
-    query = "SELECT * FROM menu WHERE name = %s"
+    query = "SELECT * FROM MENU WHERE name = %s"
     
     result = fetch_query(query, (name,))
 
@@ -39,7 +39,7 @@ def add_menu_item():
     if check_duplicate_menu(name):
         raise ValueError("Menu item already exists.")
     
-    query = "INSERT INTO menu (name, category, price, image_url) VALUES (%s, %s, %s, %s)"
+    query = "INSERT INTO MENU (name, category, price, image_url) VALUES (%s, %s, %s, %s)"
     result = execute_command(query, (name, category, price, image_url))
     
     return jsonify({"code": "success", "message": "Menu item added successfully."})
@@ -53,7 +53,7 @@ def delete_menu_item():
     if not name:
         raise ValueError("Missing required fields.")
     
-    query = "DELETE FROM menu WHERE name = %s"
+    query = "DELETE FROM MENU WHERE name = %s"
     result = execute_command(query, (name,))
     
     return jsonify({"code": "success", "message": "Menu item deleted successfully."})
@@ -62,7 +62,7 @@ def delete_menu_item():
 @menus_blueprint.route('/menus', methods=['GET'])
 def get_menu_items():
     category = request.args.get("category")
-    query = "SELECT * FROM menu" + (f" WHERE category = %s" if category else "")
+    query = "SELECT * FROM MENU" + (f" WHERE category = %s" if category else "")
     params = (category,) if category else ()
 
     result = fetch_query(query, params)
@@ -85,7 +85,28 @@ def update_menu_item():
     if not check_duplicate_menu(name):
         raise ValueError("Menu item does not exist.")
     
-    query = "UPDATE menu SET category = %s, price = %s, image_url = %s WHERE name = %s"
+    query = "UPDATE MENU SET category = %s, price = %s, image_url = %s WHERE name = %s"
     result = execute_command(query, (category, price, image_url, name))
     
     return jsonify({"code": "success", "message": "Menu item updated successfully."})
+
+@menus_blueprint.route('/menus/ingredients', methods=['GET'])
+def get_menu_item_ingredients():
+    name = request.args.get("name")
+    if not name:
+        raise ValueError("Missing required fields.")
+   
+    query = "SELECT i.name, i.is_available, i.image_URL, i.ingredient_type FROM INGREDIENT i JOIN MENU_INGREDIENT mi ON i.name = mi.ingredient_name WHERE mi.menu_name = %s"
+    result = fetch_query(query, (name,))
+
+    ingredients = [{
+        "name": item[0],
+        "is_available": item[1],
+        "image_URL": item[2],
+        "ingredient_type": item[3]
+    } for item in result]
+
+    return jsonify({"code": "success", "ingredients": ingredients})
+    
+    # 
+    

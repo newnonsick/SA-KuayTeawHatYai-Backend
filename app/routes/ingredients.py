@@ -28,7 +28,7 @@ def validate_ingredient(data):
 
 def check_duplicate_ingredient(name):
     """Check for duplicate ingredients."""
-    query = "SELECT * FROM ingredients WHERE name = %s"
+    query = "SELECT * FROM INGREDIENT WHERE name = %s"
     result = fetch_query(query, (name,))
 
     return len(result) > 0
@@ -37,7 +37,7 @@ def check_duplicate_ingredient(name):
 
 @ingredients_blueprint.route('/ingredients', methods=['GET'])
 def get_ingredients():
-    query = "SELECT * FROM ingredients"
+    query = "SELECT * FROM INGREDIENT"
     result = fetch_query(query)
     
     ingredients = [{
@@ -58,7 +58,7 @@ def add_ingredients():
     if check_duplicate_ingredient(name):
         raise ValueError("Ingredient already exists.")
     
-    query = "INSERT INTO ingredients (name, is_available, image_url, ingredient_type) VALUES (%s, %s, %s, %s)"
+    query = "INSERT INTO INGREDIENT (name, is_available, image_url, ingredient_type) VALUES (%s, %s, %s, %s)"
     result = execute_command(query, (name, is_available, image_url, ingredient_type))
     
     return jsonify({"code": "success", "message": "Ingredient added successfully."})
@@ -72,7 +72,7 @@ def delete_ingredients():
     if not name:
         raise ValueError("Missing required fields.")
     
-    query = "DELETE FROM ingredients WHERE name = %s"
+    query = "DELETE FROM INGREDIENT WHERE name = %s"
     result = execute_command(query, (name,))
     
     return jsonify({"code": "success", "message": "Ingredient deleted successfully."})
@@ -86,7 +86,7 @@ def update_ingredients():
     if not check_duplicate_ingredient(name):
         raise ValueError("Ingredient does not exist.")
     
-    query = "UPDATE ingredients WHERE name = %s SET is_available = %s, image_url = %s, ingredient_type = %s"
+    query = "UPDATE INGREDIENT WHERE name = %s SET is_available = %s, image_url = %s, ingredient_type = %s"
     result = execute_command(query, (name, is_available, image_url, ingredient_type))
     
     return jsonify({"code": "success", "message": "Ingredient updated successfully."})

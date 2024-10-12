@@ -1,5 +1,6 @@
 import psycopg2
 from flask import current_app
+import atexit
 
 def init_db(app):
     app.db_connection = psycopg2.connect(
@@ -9,8 +10,16 @@ def init_db(app):
         port=app.config['POSTGRES_PORT'],
         database=app.config['POSTGRES_DB']
     )
+    
+    atexit.register(close_db_connection, app)
 
-#use with INSERT, UPDATE, DELETE queries
+def close_db_connection(app):
+    conn = app.db_connection
+    if conn:
+        conn.close()
+        print("Database connection closed.")
+
+# Use with INSERT, UPDATE, DELETE queries
 def execute_command(query, params=None):
     conn = current_app.db_connection
     cursor = conn.cursor()
@@ -31,7 +40,7 @@ def execute_command(query, params=None):
 
     return result
 
-#use with SELECT queries
+# Use with SELECT queries
 def fetch_query(query, params=None):
     conn = current_app.db_connection
     cursor = conn.cursor()
@@ -49,6 +58,3 @@ def fetch_query(query, params=None):
         cursor.close()
 
     return result
-
-
-
