@@ -9,23 +9,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variable to avoid Python buffering output
+# Set environment variable to avoid Python output buffering
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
 # Copy requirements.txt first to leverage Docker cache
 COPY requirements.txt .
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
+# Copy the rest of the application code into the container
 COPY . .
 
 # Expose port 5000
 EXPOSE 5000
 
-# Run the Flask-SocketIO app with eventlet
-CMD ["python", "-m", "eventlet.run", "run"]
+# Start the Flask-SocketIO app with eventlet
+CMD ["python", "run.py"]
