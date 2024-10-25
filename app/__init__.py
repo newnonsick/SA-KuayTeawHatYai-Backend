@@ -5,7 +5,7 @@ from .config import Config
 from .db import init_db
 from flask_cors import CORS
 
-socketio = SocketIO()
+socketio = SocketIO(cors_allowed_origins="*")
 
 def create_app():
     app = Flask(__name__)

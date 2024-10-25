@@ -1,7 +1,7 @@
 # Use Python 3.12.7-slim as the base image
 FROM python:3.12.7-slim
 
-# Install necessary system dependencies, including PostgreSQL development tools
+# Install necessary system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
@@ -12,23 +12,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set environment variable to avoid Python buffering output
 ENV PYTHONUNBUFFERED=1
 
-# Create and set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy only requirements first to leverage Docker cache
+# Copy requirements.txt first to leverage Docker cache
 COPY requirements.txt .
 
-# Install required Python packages
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
+# Copy the rest of the application code
 COPY . .
 
-# Expose port 5000 for external access
+# Expose port 5000
 EXPOSE 5000
 
-# Define environment variable
-ENV NAME World
-
-# Use eventlet as the worker for Flask-SocketIO
-CMD ["python", "run.py"]
+# Run the Flask-SocketIO app with eventlet
+CMD ["python", "-m", "eventlet.run", "run"]
