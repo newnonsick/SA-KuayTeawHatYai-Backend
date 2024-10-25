@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
+from ..socket_service import socketio
 from ..db import execute_command, fetch_query
 import uuid
 import datetime
-from flask_socketio import emit
 
 orders_blueprint = Blueprint('orders', __name__)
 
@@ -216,7 +216,7 @@ def add_order():
             query = "INSERT INTO ORDER_INGREDIENT (order_item_id, ingredient_name) VALUES (%s, %s)"
             execute_command(query, (order_item_id, ingredient))
 
-    emit('new_order', {"order_id": order_id}, broadcast=True)
+    socketio.emit('new_order', {"order_id": order_id})
     return jsonify({"code": "success", "message": "Order added successfully."})
 
 
@@ -224,13 +224,35 @@ def add_order():
 def get_order(id):
     if not validate_uuid(id):
         raise ValueError("Invalid order ID.")
+    
+    if not isOrderExist(id):
+        raise ValueError("Order does not exist.")
 
-    query = "SELECT * FROM ORDERS WHERE order_id = %s"
+    query = """
+    SELECT 
+        o.order_id,
+        o.order_status,
+        o.order_datetime,
+        o.total_amount,
+        o.table_number,
+        oi.order_item_id,
+        oi.menu_name,
+        oi.quantity,
+        oi.portions,
+        oi.extra_info,
+        ig.ingredient_name
+    FROM 
+        ORDERS o
+    LEFT JOIN 
+        ORDER_ITEM oi ON o.order_id = oi.order_id
+    LEFT JOIN 
+        ORDER_INGREDIENT ig ON oi.order_item_id = ig.order_item_id
+    WHERE 
+        o.order_id = %s
+    """
 
     result = fetch_query(query, (id,))
-    if not result:
-        raise ValueError("Order does not exist.")
-    
+
     order_info = {
         "order_id": result[0][0],
         "order_status": result[0][1],
@@ -239,27 +261,38 @@ def get_order(id):
         "table_number": result[0][4]
     }
 
-    query = "SELECT * FROM ORDER_ITEM WHERE order_id = %s"
-
-    result = fetch_query(query, (id,))
-
     menus = []
-    for item in result:
-        query = "SELECT ingredient_name FROM ORDER_INGREDIENT WHERE order_item_id = %s"
-        ingredients = fetch_query(query, (item[0],))
+    current_item_id = None
+    current_item = None
+
+    for row in result:
+        order_item_id = row[5]
         
-        order = {
-            "menu": {
-                "name": item[1]
-            },
-            "quantity": item[3],
-            "ingredients": [ingredient[0] for ingredient in ingredients],
-            "portion": item[5],
-            "extraInfo": item[6]
-        }
-        menus.append(order)
+        # Check if we are starting a new menu item
+        if current_item_id != order_item_id:
+            if current_item:  # Save the previous menu item before creating a new one
+                menus.append(current_item)
+            
+            current_item = {
+                "menu": {
+                    "name": row[6]
+                },
+                "quantity": row[7],
+                "ingredients": [],
+                "portion": row[8],
+                "extraInfo": row[9]
+            }
+            current_item_id = order_item_id
+        
+        # Add ingredient to the current menu item
+        if row[10]:  # Check if ingredient_name is not None
+            current_item["ingredients"].append(row[10])
+
+    if current_item:  # Don't forget to add the last item
+        menus.append(current_item)
 
     return jsonify({"code": "success", "order": order_info, "menus": menus})
+
 
 @orders_blueprint.route('/orders/update-status', methods=['PUT'])
 def update_status_order():
@@ -279,7 +312,7 @@ def update_status_order():
     query = "UPDATE ORDERS SET order_status = %s WHERE order_id = %s"
     execute_command(query, (order_status, order_id))
 
-    emit('update_order', {"order_id": order_id, "order_status": order_status}, broadcast=True)
+    socketio.emit('update_order', {"order_id": order_id, "order_status": order_status})
     return jsonify({"code": "success", "message": "Order updated successfully."})
 
 

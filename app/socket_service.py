@@ -3,6 +3,7 @@ from . import socketio
 
 @socketio.on('connect')
 def handle_connect():
+    print('Client connected')
     emit('response', {'message': 'Connected to server'})
 
 

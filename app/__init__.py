@@ -13,6 +13,11 @@ def create_app():
 
     app.config.from_object(Config)
 
+    # Initialize SocketIO
+    socketio.init_app(app)
+
+    from . import socket_service
+
     # Initialize database
     init_db(app)
 
@@ -48,10 +53,5 @@ def create_app():
 
     #     if not verify_token(token):
     #         raise ValueError("Invalid or expired token")
-
-    # Initialize SocketIO
-    socketio.init_app(app)
-
-    from . import socket_service
 
     return app
