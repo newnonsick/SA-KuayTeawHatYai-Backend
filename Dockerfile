@@ -19,4 +19,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Run the Flask-SocketIO app
-CMD ["python", "main.py"]
+CMD ["python", "run.py"]
