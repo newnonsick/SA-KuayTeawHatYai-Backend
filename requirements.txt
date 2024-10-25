@@ -1,6 +1,6 @@
 Flask
 Flask-SocketIO
 python-dotenv
-psycopg2
+psycopg2-binary
 Flask-Cors
 eventlet
