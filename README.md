@@ -81,7 +81,8 @@ By default, the application will run on `http://localhost:5000/`
 │   │   ├──
 │   │   └──
 │   ├── socket_service.py    # Socket.IO event handlers
-│   └── config.py            # Configuration settings (e.g., environment)
+│   ├── config.py            # Configuration settings (e.g., environment)
+│   └── utils.py             # Token generation and verification functions
 │
 ├── /migrations               # Folder for SQL migration scripts
 │   └── 001_initial_schema.sql
