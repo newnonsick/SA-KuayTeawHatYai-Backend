@@ -316,4 +316,32 @@ def update_status_order():
     return jsonify({"code": "success", "message": "Order updated successfully."})
 
 
+@orders_blueprint.route('/orders/delete', methods=['DELETE'])
+def delete_order():
+    data = request.get_json()
+    order_id = data.get("order_id")
+
+    if not order_id:
+        raise ValueError("Missing required fields.")
+    
+    if not validate_uuid(order_id):
+        raise ValueError("Invalid order ID.")
+    
+    if not isOrderExist(order_id):
+        raise ValueError("Order does not exist.")
+    
+    query = """
+    DELETE FROM ORDERS WHERE order_id = %s;
+
+    DELETE FROM ORDER_ITEM WHERE order_id = %s;
+
+    DELETE FROM ORDER_INGREDIENT WHERE order_item_id IN (
+        SELECT order_item_id FROM ORDER_ITEM WHERE order_id = %s
+    );
+    """
+    execute_command(query, (order_id, order_id, order_id))
+
+    return jsonify({"code": "success", "message": "Order deleted successfully."})
+
+
 
