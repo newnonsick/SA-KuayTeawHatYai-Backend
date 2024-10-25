@@ -1,21 +1,21 @@
 INSERT INTO INGREDIENT (name, is_available, image_URL, ingredient_type) VALUES
-('เส้นเล็ก', TRUE, 'https://shorturl.at/5t941', 'เส้น'),
-('เส้นใหญ่', TRUE, 'https://shorturl.at/5t941', 'เส้น'),
-('เส้นหมี่', TRUE, 'https://shorturl.at/5t941', 'เส้น'),
-('เส้นบะหมี่', TRUE, 'https://shorturl.at/5t941', 'เส้น'),
-('เส้นวุ้นเส้น', TRUE, 'https://shorturl.at/5t941', 'เส้น'),
-('หมูชิ้น', TRUE, 'https://shorturl.at/5t941', 'เนื้อสัตว์'),
-('หมูเด้ง', FALSE, 'https://shorturl.at/5t941', 'เนื้อสัตว์'),
-('เนื้อ', TRUE, 'https://shorturl.at/5t941', 'เนื้อสัตว์'),
-('ไก่ฉีก', TRUE, 'https://shorturl.at/5t941', 'เนื้อสัตว์'),
-('น้ำ', TRUE, 'https://shorturl.at/5t941', 'น้ำ'),
-('แห้ง', TRUE, 'https://shorturl.at/5t941', 'น้ำ');
+('เส้นเล็ก', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เส้น'),
+('เส้นใหญ่', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เส้น'),
+('เส้นหมี่', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เส้น'),
+('เส้นบะหมี่', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เส้น'),
+('เส้นวุ้นเส้น', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เส้น'),
+('หมูชิ้น', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เนื้อสัตว์'),
+('หมูเด้ง', FALSE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เนื้อสัตว์'),
+('เนื้อ', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เนื้อสัตว์'),
+('ไก่ฉีก', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'เนื้อสัตว์'),
+('น้ำ', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'น้ำ'),
+('แห้ง', TRUE, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg', 'น้ำ');
 
 INSERT INTO MENU (name, category, price, image_URL) VALUES
-('ก๋วยเตี๋ยวน้ำใส', 'ก๋วยเตี๋ยว', 45.00, 'https://shorturl.at/5t941'),
-('ก๋วยเตี๋ยวน้ำตก', 'ก๋วยเตี๋ยว', 45.00, 'https://shorturl.at/5t941'),
-('ก๋วยเตี๋ยวต้มยำ', 'ก๋วยเตี๋ยว', 45.00, 'https://shorturl.at/5t941'),
-('เกาเหลาทรงเครื่อง', 'ก๋วยเตี๋ยว', 55.00, 'https://shorturl.at/5t941');
+('ก๋วยเตี๋ยวน้ำใส', 'ก๋วยเตี๋ยว', 45.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
+('ก๋วยเตี๋ยวน้ำตก', 'ก๋วยเตี๋ยว', 45.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
+('ก๋วยเตี๋ยวต้มยำ', 'ก๋วยเตี๋ยว', 45.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
+('เกาเหลาทรงเครื่อง', 'ก๋วยเตี๋ยว', 55.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg');
 
 INSERT INTO TABLES (table_number) VALUES
 ('A01'),
@@ -54,6 +54,7 @@ INSERT INTO MENU_INGREDIENT (menu_name, ingredient_name) VALUES
 ('ก๋วยเตี๋ยวต้มยำ', 'เนื้อ'),
 ('ก๋วยเตี๋ยวต้มยำ', 'ไก่ฉีก'),
 ('ก๋วยเตี๋ยวต้มยำ', 'น้ำ'),
+('ก๋วยเตี๋ยวต้มยำ', 'แห้ง'),
 ('เกาเหลาทรงเครื่อง', 'หมูชิ้น'),
 ('เกาเหลาทรงเครื่อง', 'หมูเด้ง'),
 ('เกาเหลาทรงเครื่อง', 'เนื้อ'),
