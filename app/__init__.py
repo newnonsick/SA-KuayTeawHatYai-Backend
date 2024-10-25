@@ -25,6 +25,9 @@ def create_app():
     from .routes.tables import tables_blueprint
     app.register_blueprint(tables_blueprint)
 
+    from .routes.orders import orders_blueprint
+    app.register_blueprint(orders_blueprint)
+
     # Initialize SocketIO
     socketio.init_app(app)
 

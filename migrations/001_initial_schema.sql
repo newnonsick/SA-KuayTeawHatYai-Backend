@@ -21,7 +21,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS ORDERS (
     order_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_status VARCHAR(20),
-    order_date DATE NOT NULL,
+    order_datetime TIMESTAMP NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
     table_number VARCHAR(5) REFERENCES TABLES(table_number) ON DELETE SET NULL
 );
