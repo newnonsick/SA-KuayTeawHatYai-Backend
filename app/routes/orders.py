@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from ..db import execute_command, fetch_query
 import uuid
 import datetime
+from flask_socketio import emit
 
 orders_blueprint = Blueprint('orders', __name__)
 
@@ -215,6 +216,7 @@ def add_order():
             query = "INSERT INTO ORDER_INGREDIENT (order_item_id, ingredient_name) VALUES (%s, %s)"
             execute_command(query, (order_item_id, ingredient))
 
+    emit('new_order', {"order_id": order_id}, broadcast=True)
     return jsonify({"code": "success", "message": "Order added successfully."})
 
 
@@ -277,6 +279,7 @@ def update_status_order():
     query = "UPDATE ORDERS SET order_status = %s WHERE order_id = %s"
     execute_command(query, (order_status, order_id))
 
+    emit('update_order', {"order_id": order_id, "order_status": order_status}, broadcast=True)
     return jsonify({"code": "success", "message": "Order updated successfully."})
 
 

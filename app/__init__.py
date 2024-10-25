@@ -1,6 +1,5 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from flask_socketio import SocketIO
-
 from app.utils import verify_token
 from .config import Config
 from .db import init_db
