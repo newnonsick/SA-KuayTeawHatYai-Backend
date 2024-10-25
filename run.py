@@ -27,6 +27,6 @@ def handle_exception(error):
         "code": "Internal Server Error", "message": "An error occurred. Please try again later."
     }), 500
 
-
-print(f"Running app on port {app.config['PORT']}...")
-socketio.run(app, port=app.config['PORT'], debug=False)
+if __name__ == '__main__':
+    print(f"Running app on port {app.config['PORT']}...")
+    socketio.run(app, port=app.config['PORT'], debug=False)
