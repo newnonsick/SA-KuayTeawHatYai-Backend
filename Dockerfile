@@ -18,5 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose port 5000 for external access
 EXPOSE 5000
 
+# Define environment variable
+ENV FLASK_ENV production
+
 # Run the Flask-SocketIO app
 CMD ["python", "run.py"]
