@@ -49,6 +49,23 @@ def get_ingredients():
     
     return jsonify({"code": "success", "ingredients": ingredients})
 
+@ingredients_blueprint.route('/ingredients/<name>', methods=['GET'])
+def get_ingredient(name):
+    query = "SELECT * FROM INGREDIENT WHERE name = %s"
+    result = fetch_query(query, (name,))
+    
+    if not result:
+        raise ValueError("Ingredient does not exist.")
+    
+    ingredient = {
+        "name": result[0][0],
+        "is_available": result[0][1],
+        "image_url": result[0][2],
+        "ingredient_type": result[0][3]
+    }
+    
+    return jsonify({"code": "success", "ingredient": ingredient})
+
 
 @ingredients_blueprint.route('/ingredients/add', methods=['POST'])
 def add_ingredients():

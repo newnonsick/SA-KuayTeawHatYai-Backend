@@ -1,49 +1,49 @@
 CREATE TABLE IF NOT EXISTS INGREDIENT (
-    name VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(100) PRIMARY KEY,
     is_available BOOLEAN NOT NULL,
     image_URL VARCHAR(255),
-    ingredient_type VARCHAR(255)
+    ingredient_type VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS MENU (
-    name VARCHAR(255) PRIMARY KEY,
-    category VARCHAR(255),
+    name VARCHAR(100) PRIMARY KEY,
+    category VARCHAR(50),
     price DECIMAL(10, 2) NOT NULL,
     image_URL VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS TABLES (
-    table_number VARCHAR(10) PRIMARY KEY
+    table_number VARCHAR(5) PRIMARY KEY
 );
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS ORDERS (
     order_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    order_status VARCHAR(255),
+    order_status VARCHAR(20),
     order_date DATE NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    table_number VARCHAR(10) REFERENCES TABLES(table_number) ON DELETE SET NULL
+    table_number VARCHAR(5) REFERENCES TABLES(table_number) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS ORDER_ITEM (
     order_item_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    menu_name VARCHAR(255) REFERENCES MENU(name) ON DELETE CASCADE,
+    menu_name VARCHAR(100) REFERENCES MENU(name) ON DELETE CASCADE,
     order_id UUID REFERENCES ORDERS(order_id) ON DELETE CASCADE,
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    portions VARCHAR(255),
+    portions VARCHAR(50),
     extra_info VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS ORDER_INGREDIENT (
     order_ingredient_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_item_id UUID REFERENCES ORDER_ITEM(order_item_id) ON DELETE CASCADE,
-    ingredient_name VARCHAR(255) REFERENCES INGREDIENT(name) ON DELETE CASCADE
+    ingredient_name VARCHAR(100) REFERENCES INGREDIENT(name) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS MENU_INGREDIENT (
-    menu_name VARCHAR(255) REFERENCES MENU(name) ON DELETE CASCADE,
-    ingredient_name VARCHAR(255) REFERENCES INGREDIENT(name) ON DELETE CASCADE,
+    menu_name VARCHAR(100) REFERENCES MENU(name) ON DELETE CASCADE,
+    ingredient_name VARCHAR(100) REFERENCES INGREDIENT(name) ON DELETE CASCADE,
     PRIMARY KEY (menu_name, ingredient_name)
 );

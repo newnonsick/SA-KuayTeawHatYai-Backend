@@ -75,6 +75,23 @@ def get_menu_items():
     
     return jsonify({"code": "success", "menus": menu_items})
 
+@menus_blueprint.route('/menus/<name>', methods=['GET'])
+def get_menu_item(name):
+    query = "SELECT * FROM MENU WHERE name = %s"
+    result = fetch_query(query, (name,))
+
+    if not result:
+        raise ValueError("Menu item does not exist.")
+    
+    menu_item = {
+        "name": result[0][0],
+        "category": result[0][1],
+        "price": result[0][2],
+        "image_url": result[0][3]
+    }
+    
+    return jsonify({"code": "success", "menu": menu_item})
+
 
 @menus_blueprint.route('/menus/update', methods=['PUT'])
 def update_menu_item():
