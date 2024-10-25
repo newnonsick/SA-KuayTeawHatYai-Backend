@@ -69,7 +69,7 @@ def get_menu_items():
     menu_items = [{
         "name": item[0],
         "category": item[1],
-        "price": item[2],
+        "price": float(item[2]),
         "image_url": item[3]
     } for item in result]
     
@@ -86,7 +86,7 @@ def get_menu_item(name):
     menu_item = {
         "name": result[0][0],
         "category": result[0][1],
-        "price": result[0][2],
+        "price": float(result[0][2]),
         "image_url": result[0][3]
     }
     

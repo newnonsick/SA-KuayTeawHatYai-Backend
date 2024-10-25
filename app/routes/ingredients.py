@@ -3,11 +3,6 @@ from ..db import execute_command, fetch_query
 
 ingredients_blueprint = Blueprint('ingredients', __name__)
 
-@ingredients_blueprint.route('/', methods=['GET'])
-def index():
-    return jsonify({"message": "Hello, World!"})
-
-
 def validate_ingredient(data):
     """Validate the ingredient data."""
     if not data:

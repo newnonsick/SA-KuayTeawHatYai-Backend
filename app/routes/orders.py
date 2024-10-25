@@ -277,7 +277,7 @@ def get_order(id):
                 "menu": {
                     "name": row[6]
                 },
-                "quantity": row[7],
+                "quantity": int(row[7]),
                 "ingredients": [],
                 "portion": row[8],
                 "extraInfo": row[9]
