@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS ORDER_ITEM (
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     portions VARCHAR(50),
-    extra_info VARCHAR(255)
+    extra_info VARCHAR(255),
+    orderitem_status VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS ORDER_INGREDIENT (

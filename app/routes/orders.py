@@ -209,8 +209,8 @@ def add_order():
             
             order_item_id = str(uuid.uuid4())
 
-        query = "INSERT INTO ORDER_ITEM (order_item_id, menu_name, order_id, quantity, price, portions, extra_info) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        execute_command(query, (order_item_id, menu.get("name"), order_id, quantity, price, portion, extra_info))
+        query = "INSERT INTO ORDER_ITEM (order_item_id, menu_name, order_id, quantity, price, portions, extra_info, orderitem_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        execute_command(query, (order_item_id, menu.get("name"), order_id, quantity, price, portion, extra_info, "Pending"))
 
         for ingredient in ingredients:
             query = "INSERT INTO ORDER_INGREDIENT (order_item_id, ingredient_name) VALUES (%s, %s)"
@@ -243,7 +243,9 @@ def get_order(id):
         ig.ingredient_name,
         m.category,
         m.image_url,
-        m.price
+        m.price,
+        oi.order_item_id,
+        oi.orderitem_status
     FROM 
         ORDERS o
     LEFT JOIN 
@@ -285,10 +287,12 @@ def get_order(id):
                     "image_url": row[12],
                     "price": float(row[13])
                 },
+                "order_item_id": row[14],
                 "quantity": int(row[7]),
                 "ingredients": [],
                 "portion": row[8],
-                "extraInfo": row[9]
+                "extraInfo": row[9],
+                "orderitem_status": row[15]
             }
             current_item_id = order_item_id
         
@@ -350,6 +354,21 @@ def delete_order():
     execute_command(query, (order_id, order_id, order_id))
 
     return jsonify({"code": "success", "message": "Order deleted successfully."})
+
+
+@orders_blueprint.route('/orders/update-item-status', methods=['PUT'])
+def update_status_order_item():
+    data = request.get_json()
+    order_item_id = data.get("order_item_id")
+    order_item_status = data.get("order_item_status")
+
+    if not all([order_item_id, order_item_status]):
+        raise ValueError("Missing required fields.")
+    
+    query = "UPDATE ORDER_ITEM SET orderitem_status = %s WHERE order_item_id = %s"
+    execute_command(query, (order_item_status, order_item_id))
+
+    return jsonify({"code": "success", "message": "Order item updated successfully."})
 
 
 
