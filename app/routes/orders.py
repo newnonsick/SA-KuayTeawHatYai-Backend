@@ -119,15 +119,16 @@ def validate_order_item(orders):
         # if not isinstance(ingredients, list):
         #     raise ValueError("Ingredients must be a list.")
         
-        for ingredient in ingredients:
-            if not isIngredientExist(ingredient):
-                raise ValueError("Ingredient does not exist.")
-            
-            if not isIngredientBelongToMenu(menu.get("name"), ingredient):
-                raise ValueError("Ingredient does not belong to the menu.")
-        
-        if portion not in ["พิเศษ", "ธรรมดา"]:
-            raise ValueError("Invalid portion.")
+        if ingredients:
+            for ingredient in ingredients:
+                if not isIngredientExist(ingredient):
+                    raise ValueError("Ingredient does not exist.")
+                
+                if not isIngredientBelongToMenu(menu.get("name"), ingredient):
+                    raise ValueError("Ingredient does not belong to the menu.")
+        if portion:
+            if portion not in ["พิเศษ", "ธรรมดา"]:
+                raise ValueError("Invalid portion.")
         
 def getTotalPrice(orders):
     total_price = 0
@@ -212,9 +213,10 @@ def add_order():
         query = "INSERT INTO ORDER_ITEM (order_item_id, menu_name, order_id, quantity, price, portions, extra_info, orderitem_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         execute_command(query, (order_item_id, menu.get("name"), order_id, quantity, price, portion, extra_info, "Pending"))
 
-        for ingredient in ingredients:
-            query = "INSERT INTO ORDER_INGREDIENT (order_item_id, ingredient_name) VALUES (%s, %s)"
-            execute_command(query, (order_item_id, ingredient))
+        if ingredients:
+            for ingredient in ingredients:
+                query = "INSERT INTO ORDER_INGREDIENT (order_item_id, ingredient_name) VALUES (%s, %s)"
+                execute_command(query, (order_item_id, ingredient))
 
     socketio.emit('new_order', {"order_id": order_id})
     return jsonify({"code": "success", "message": "Order added successfully."})
