@@ -240,13 +240,18 @@ def get_order(id):
         oi.quantity,
         oi.portions,
         oi.extra_info,
-        ig.ingredient_name
+        ig.ingredient_name,
+        m.category,
+        m.image_url,
+        m.price
     FROM 
         ORDERS o
     LEFT JOIN 
         ORDER_ITEM oi ON o.order_id = oi.order_id
     LEFT JOIN 
         ORDER_INGREDIENT ig ON oi.order_item_id = ig.order_item_id
+    LEFT JOIN
+        MENU m ON oi.menu_name = m.name
     WHERE 
         o.order_id = %s
     """
@@ -275,7 +280,10 @@ def get_order(id):
             
             current_item = {
                 "menu": {
-                    "name": row[6]
+                    "name": row[6],
+                    "category": row[11],
+                    "image_url": row[12],
+                    "price": float(row[13])
                 },
                 "quantity": int(row[7]),
                 "ingredients": [],
