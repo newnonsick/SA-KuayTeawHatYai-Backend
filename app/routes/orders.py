@@ -292,7 +292,8 @@ def get_order(id):
                 "ingredients": [],
                 "portion": row[8],
                 "extraInfo": row[9],
-                "orderitem_status": row[15]
+                "orderitem_status": row[15],
+                "order_price": (float(row[13]) + (10 if row[8] == "พิเศษ" else 0)) * int(row[7])
             }
             current_item_id = order_item_id
         
