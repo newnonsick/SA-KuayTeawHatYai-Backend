@@ -37,6 +37,12 @@ def create_app():
     from .routes.orders import orders_blueprint
     app.register_blueprint(orders_blueprint)
 
+    from .routes.search import search_blueprint
+    app.register_blueprint(search_blueprint)
+
+    from .routes.income import income_blueprint
+    app.register_blueprint(income_blueprint)
+
     # รอทุกอย่างเรียบร้อยแล้ว ค่อยใช้
     # @app.before_request
     # def authenticate_request():
