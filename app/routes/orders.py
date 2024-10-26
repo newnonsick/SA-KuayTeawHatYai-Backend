@@ -116,8 +116,8 @@ def validate_order_item(orders):
         if not isinstance(quantity, int):
             raise ValueError("Quantity must be an integer.")
         
-        if not isinstance(ingredients, list):
-            raise ValueError("Ingredients must be a list.")
+        # if not isinstance(ingredients, list):
+        #     raise ValueError("Ingredients must be a list.")
         
         for ingredient in ingredients:
             if not isIngredientExist(ingredient):
