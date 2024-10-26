@@ -107,7 +107,7 @@ def validate_order_item(orders):
         portion = order.get("portion")
         extra_info = order.get("extraInfo")
 
-        if not all([menu, quantity, ingredients, portion]):
+        if not all([menu, quantity]):
             raise ValueError("Missing required fields.")
         
         if not isMenuExist(menu.get("name")):

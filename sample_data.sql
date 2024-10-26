@@ -15,7 +15,9 @@ INSERT INTO MENU (name, category, price, image_URL) VALUES
 ('ก๋วยเตี๋ยวน้ำใส', 'ก๋วยเตี๋ยว', 45.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
 ('ก๋วยเตี๋ยวน้ำตก', 'ก๋วยเตี๋ยว', 45.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
 ('ก๋วยเตี๋ยวต้มยำ', 'ก๋วยเตี๋ยว', 45.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
-('เกาเหลาทรงเครื่อง', 'ก๋วยเตี๋ยว', 55.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg');
+('เกาเหลาทรงเครื่อง', 'ก๋วยเตี๋ยว', 55.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
+('น้ำเปล่า', 'เครื่องดื่ม', 10.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg'),
+('โค้ก', 'เครื่องดื่ม', 15.00, 'https://cms.rhinoshield.app/public/images/ip_page_rick_and_morty_icon_894e334f64.jpg');
 
 INSERT INTO TABLES (table_number) VALUES
 ('A01'),
