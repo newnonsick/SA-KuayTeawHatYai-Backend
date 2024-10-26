@@ -13,11 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-world:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/kuayteawhatyai-backend:latest .
       - name: Push the Docker image
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/kuayteawhatyai-backend:latest
 
   deploy:
     runs-on: ubuntu-latest
