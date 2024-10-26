@@ -63,7 +63,7 @@ def get_orders():
     orders = [{
         "order_id": item[0],
         "order_status": item[1],
-        "order_date": item[2].strftime("%Y-%m-%d"),
+        "order_datetime": item[2].strftime("%Y-%m-%d %H:%M:%S"),
         "total_amount": float(item[3]),
         "table_number": item[4]
     } for item in result]
@@ -256,7 +256,7 @@ def get_order(id):
     order_info = {
         "order_id": result[0][0],
         "order_status": result[0][1],
-        "order_date": result[0][2].strftime("%Y-%m-%d"),
+        "order_datetime": result[0][2].strftime("%Y-%m-%d %H:%M:%S"),
         "total_amount": float(result[0][3]),
         "table_number": result[0][4]
     }
