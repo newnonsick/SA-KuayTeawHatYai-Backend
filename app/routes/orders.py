@@ -43,22 +43,32 @@ def validate_uuid(uuid_string):
 def get_orders():
     status = request.args.get("status")
     table_number = request.args.get("table_number")
+    order_date = request.args.get("date")
 
-    if status and table_number:
-        query = "SELECT * FROM ORDERS WHERE order_status = %s AND table_number = %s"
-        result = fetch_query(query, (status, table_number))
+    query = "SELECT * FROM ORDERS"
+    conditions = []
+    params = []
 
-    elif status:
-        query = "SELECT * FROM ORDERS WHERE order_status = %s"
-        result = fetch_query(query, (status,))
-    
-    elif table_number:
-        query = "SELECT * FROM ORDERS WHERE table_number = %s"
-        result = fetch_query(query, (table_number,))
+    if status:
+        conditions.append("order_status = %s")
+        params.append(status)
 
-    else:
-        query = "SELECT * FROM ORDERS"
-        result = fetch_query(query)
+    if table_number:
+        conditions.append("table_number = %s")
+        params.append(table_number)
+
+    if order_date:
+        try:
+            date_obj = datetime.datetime.strptime(order_date, "%Y-%m-%d").date()
+            conditions.append("DATE(order_datetime) = %s")
+            params.append(date_obj)
+        except ValueError:
+            return jsonify({"code": "error", "message": "Invalid date format, use YYYY-MM-DD"}), 400
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    result = fetch_query(query, tuple(params))
 
     orders = [{
         "order_id": item[0],
