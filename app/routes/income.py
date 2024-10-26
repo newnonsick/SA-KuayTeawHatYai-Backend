@@ -16,7 +16,7 @@ def get_income():
             raise ValueError("Invalid date format. Use YYYY-MM-DD.")
 
         query = """
-            SELECT m.category, SUM(oi.price * oi.quantity) AS total_income
+            SELECT m.category, SUM(oi.price * oi.quantity) AS total_income, SUM(oi.quantity) AS total_sales
             FROM MENU m
             JOIN ORDER_ITEM oi ON m.name = oi.menu_name
             JOIN ORDERS o ON oi.order_id = o.order_id
@@ -28,7 +28,8 @@ def get_income():
 
         income = [{
             "category": item[0],
-            "total_income": float(item[1])
+            "total_income": float(item[1]),
+            "total_sales": int(item[2])
         } for item in result]
 
         return jsonify({"code": "success", "income": income, "total_income": sum([item["total_income"] for item in income])})
@@ -36,7 +37,7 @@ def get_income():
     else:
 
         query = """
-            SELECT m.category, SUM(oi.price * oi.quantity) AS total_income
+            SELECT m.category, SUM(oi.price * oi.quantity) AS total_income, SUM(oi.quantity) AS total_sales
             FROM MENU m
             JOIN ORDER_ITEM oi ON m.name = oi.menu_name
             JOIN ORDERS o ON oi.order_id = o.order_id
