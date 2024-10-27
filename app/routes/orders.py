@@ -42,6 +42,7 @@ def validate_uuid(uuid_string):
 @orders_blueprint.route('/orders', methods=['GET'])
 def get_orders():
     status = request.args.get("status")
+    status_ne = request.args.getlist("status_ne")
     table_number = request.args.get("table_number")
     order_date = request.args.get("date")
 
@@ -56,6 +57,11 @@ def get_orders():
     if table_number:
         conditions.append("table_number = %s")
         params.append(table_number)
+
+    if status_ne:
+        placeholders = ", ".join(["%s"] * len(status_ne))
+        conditions.append(f"order_status NOT IN ({placeholders})")
+        params.extend(status_ne)
 
     if order_date:
         try:
