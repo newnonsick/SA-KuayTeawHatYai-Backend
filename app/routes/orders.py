@@ -336,14 +336,13 @@ def get_order(id):
 
     return jsonify({"code": "success", "order": order_info, "menus": menus})
 
-@orders_blueprint.route('/orders/update', methods=['PUT'])
+@orders_blueprint.route('/orders/update-table', methods=['PUT'])
 def update_order():
     data = request.get_json()
     order_id = data.get("order_id")
-    order_status = data.get("order_status")
     table_number = data.get("table_number")
 
-    if not all([order_id, order_status, table_number]):
+    if not all([order_id, table_number]):
         raise ValueError("Missing required fields.")
     
     if not validate_uuid(order_id):
@@ -352,8 +351,11 @@ def update_order():
     if not isOrderExist(order_id):
         raise ValueError("Order does not exist.")
     
-    query = "UPDATE ORDERS SET order_status = %s, table_number = %s WHERE order_id = %s"
-    execute_command(query, (order_status, table_number, order_id))
+    if not isTableExist(table_number):
+        raise ValueError("Table does not exist.")
+    
+    query = "UPDATE ORDERS SET table_number = %s WHERE order_id = %s"
+    execute_command(query, (table_number, order_id))
 
     return jsonify({"code": "success", "message": "Order updated successfully."})
 
