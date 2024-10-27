@@ -101,6 +101,13 @@ def isIngredientExist(name):
 
     return len(result) > 0
 
+def isIngredientAvailable(name):
+    """Check if ingredient is available."""
+    query = "SELECT is_available FROM INGREDIENT WHERE name = %s"
+    result = fetch_query(query, (name,))
+
+    return result[0][0]
+
 def isTableExist(table_number):
     """Check for duplicate tables."""
     query = "SELECT * FROM TABLES WHERE table_number = %s"
@@ -132,10 +139,13 @@ def validate_order_item(orders):
         if ingredients:
             for ingredient in ingredients:
                 if not isIngredientExist(ingredient):
-                    raise ValueError("Ingredient does not exist.")
+                    raise ValueError(f"Ingredient {ingredient} does not exist.")
+                
+                if not isIngredientAvailable(ingredient):
+                    raise ValueError(f"Ingredient {ingredient} is not available.")
                 
                 if not isIngredientBelongToMenu(menu.get("name"), ingredient):
-                    raise ValueError("Ingredient does not belong to the menu.")
+                    raise ValueError(f"Ingredient {ingredient} does not belong to the menu {menu.get("name")}.")
         if portion:
             if portion not in ["พิเศษ", "ธรรมดา"]:
                 raise ValueError("Invalid portion.")
@@ -382,6 +392,144 @@ def update_status_order_item():
     execute_command(query, (order_item_status, order_item_id))
 
     return jsonify({"code": "success", "message": "Order item updated successfully."})
+
+def isOrderItemExist(order_item_id):
+    """Check for duplicate order items."""
+    query = "SELECT * FROM ORDER_ITEM WHERE order_item_id = %s"
+    
+    result = fetch_query(query, (order_item_id,))
+
+    return len(result) > 0
+
+
+@orders_blueprint.route('/orders/update-item', methods=['PUT'])
+def update_order_item():
+    data = request.get_json()
+    order_item_id = data.get("order_item_id")
+    ingredients = data.get("ingredients")
+    portion = data.get("portion")
+    extra_info = data.get("extraInfo")
+
+    if not all([order_item_id]):
+        raise ValueError("Missing required fields.")
+    
+    if not (ingredients or portion or extra_info):
+        raise ValueError("No data provided to update.")
+    
+    if not validate_uuid(order_item_id):
+        raise ValueError("Invalid order item ID.")
+    
+    if not isOrderItemExist(order_item_id):
+        raise ValueError("Order item does not exist.")
+    
+    validate_order_item([{
+        "menu": {"name": fetch_query("SELECT menu_name FROM ORDER_ITEM WHERE order_item_id = %s", (order_item_id,))[0][0]},
+        "quantity": 1,
+        "ingredients": ingredients,
+        "portion": portion,
+        "extraInfo": extra_info
+    }])
+    
+    if ingredients:
+        query = "DELETE FROM ORDER_INGREDIENT WHERE order_item_id = %s"
+        execute_command(query, (order_item_id,))
+        
+        for ingredient in ingredients:
+            query = "INSERT INTO ORDER_INGREDIENT (order_item_id, ingredient_name) VALUES (%s, %s)"
+            execute_command(query, (order_item_id, ingredient))
+
+    if portion:
+        query = "UPDATE ORDER_ITEM SET portions = %s WHERE order_item_id = %s"
+        execute_command(query, (portion, order_item_id))
+
+    if extra_info:
+        query = "UPDATE ORDER_ITEM SET extra_info = %s WHERE order_item_id = %s"
+        execute_command(query, (extra_info, order_item_id))
+
+    return jsonify({"code": "success", "message": "Order item updated successfully."})
+
+@orders_blueprint.route('/orders/delete-item', methods=['DELETE'])
+def delete_order_item():
+    data = request.get_json()
+    order_item_id = data.get("order_item_id")
+
+    if not order_item_id:
+        raise ValueError("Missing required fields.")
+    
+    if not validate_uuid(order_item_id):
+        raise ValueError("Invalid order item ID.")
+    
+    if not isOrderItemExist(order_item_id):
+        raise ValueError("Order item does not exist.")
+    
+    query = """
+    DELETE FROM ORDER_ITEM WHERE order_item_id = %s;
+
+    DELETE FROM ORDER_INGREDIENT WHERE order_item_id = %s;
+    """
+    execute_command(query, (order_item_id, order_item_id))
+
+    return jsonify({"code": "success", "message": "Order item deleted successfully."})
+
+@orders_blueprint.route('/orders/get-item', methods=['GET'])
+def get_order_item():
+    orderitem_status = request.args.get("status")
+
+    query = """
+    SELECT 
+        oi.order_item_id,
+        oi.menu_name,
+        oi.quantity,
+        oi.portions,
+        oi.extra_info,
+        oi.orderitem_status,
+        m.category,
+        m.image_url,
+        m.price,
+        o.order_id,
+        o.order_datetime,
+        o.table_number
+    FROM
+        ORDER_ITEM oi
+    LEFT JOIN
+        MENU m ON oi.menu_name = m.name
+    LEFT JOIN
+        ORDERS o ON oi.order_id = o.order_id
+    """
+
+    conditions = []
+    params = []
+
+    if orderitem_status:
+        conditions.append("oi.orderitem_status = %s")
+        params.append(orderitem_status)
+    
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    result = fetch_query(query, tuple(params))
+
+    order_items = [{
+        "order_item_id": item[0],
+        "menu": {
+            "name": item[1],
+            "category": item[6],
+            "image_url": item[7],
+            "price": float(item[8])
+        },
+        "quantity": int(item[2]),
+        "portions": item[3],
+        "extraInfo": item[4],
+        "orderitem_status": item[5],
+        "order_id": item[9],
+        "order_datetime": item[10].strftime("%Y-%m-%d %H:%M:%S"),
+        "table_number": item[11]
+    } for item in result]
+
+    return jsonify({"code": "success", "order_items": order_items})
+    
+
+
 
 
 
