@@ -107,6 +107,93 @@ def update_ingredients():
     return jsonify({"code": "success", "message": "Ingredient updated successfully."})
 
 
+# CREATE TABLE IF NOT EXISTS INGREDIENT (
+#     name VARCHAR(100) PRIMARY KEY,
+#     is_available BOOLEAN NOT NULL,
+#     image_URL VARCHAR(255),
+#     ingredient_type VARCHAR(50)
+# );
+
+# CREATE TABLE IF NOT EXISTS MENU (
+#     name VARCHAR(100) PRIMARY KEY,
+#     category VARCHAR(50),
+#     price DECIMAL(10, 2) NOT NULL,
+#     image_URL VARCHAR(255)
+# );
+
+# CREATE TABLE IF NOT EXISTS TABLES (
+#     table_number VARCHAR(5) PRIMARY KEY
+# );
+
+# CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+# CREATE TABLE IF NOT EXISTS ORDERS (
+#     order_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+#     order_status VARCHAR(20),
+#     order_datetime TIMESTAMP NOT NULL,
+#     total_amount DECIMAL(10, 2) NOT NULL,
+#     table_number VARCHAR(5) REFERENCES TABLES(table_number) ON DELETE SET NULL
+# );
+
+# CREATE TABLE IF NOT EXISTS ORDER_ITEM (
+#     order_item_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+#     menu_name VARCHAR(100) REFERENCES MENU(name) ON DELETE CASCADE,
+#     order_id UUID REFERENCES ORDERS(order_id) ON DELETE CASCADE,
+#     quantity INT NOT NULL,
+#     price DECIMAL(10, 2) NOT NULL,
+#     portions VARCHAR(50),
+#     extra_info VARCHAR(255),
+#     orderitem_status VARCHAR(20)
+# );
+
+# CREATE TABLE IF NOT EXISTS ORDER_INGREDIENT (
+#     order_ingredient_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+#     order_item_id UUID REFERENCES ORDER_ITEM(order_item_id) ON DELETE CASCADE,
+#     ingredient_name VARCHAR(100) REFERENCES INGREDIENT(name) ON DELETE CASCADE
+# );
+
+# CREATE TABLE IF NOT EXISTS MENU_INGREDIENT (
+#     menu_name VARCHAR(100) REFERENCES MENU(name) ON DELETE CASCADE,
+#     ingredient_name VARCHAR(100) REFERENCES INGREDIENT(name) ON DELETE CASCADE,
+#     PRIMARY KEY (menu_name, ingredient_name)
+# );
+
+
+@ingredients_blueprint.route('/ingredients/update-status', methods=['PUT'])
+def update_ingredient_status():
+    data = request.get_json()
+    name = data.get("name")
+    is_available = data.get("is_available")
+    
+    if not name or is_available is None:
+        raise ValueError("Missing required fields.")
+    
+    if not isIngredientExist(name):
+        raise ValueError("Ingredient does not exist.")
+    
+    query = "SELECT is_available FROM INGREDIENT WHERE name = %s"
+    result = fetch_query(query, (name,))
+
+    if result[0][0] == is_available:
+        raise ValueError(f"Ingredient status is already set to the provided value ({is_available}).")
+    
+    query = "UPDATE INGREDIENT SET is_available = %s WHERE name = %s"
+    result = execute_command(query, (is_available, name))
+
+    if not is_available:
+        query = """
+            UPDATE ORDER_ITEM SET orderitem_status = 'เปลี่ยนวัตถุดิบ'
+            WHERE order_item_id IN (
+                SELECT order_item_id FROM ORDER_INGREDIENT
+                WHERE ingredient_name = %s
+            )
+        """
+        result = execute_command(query, (name,))
+
+    
+    return jsonify({"code": "success", "message": "Ingredient status updated successfully."})
+
+
 
 
 

@@ -516,8 +516,6 @@ def get_order_item():
 
     result = fetch_query(query, tuple(params))
 
-    result.reverse()
-
     order_items = [{
         "order_item_id": item[0],
         "menu": {
