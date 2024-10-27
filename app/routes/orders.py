@@ -74,6 +74,8 @@ def get_orders():
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
 
+    query += " ORDER BY order_datetime ASC"
+
     result = fetch_query(query, tuple(params))
 
     result.reverse()
@@ -286,6 +288,8 @@ def get_order(id):
         MENU m ON oi.menu_name = m.name
     WHERE 
         o.order_id = %s
+    ORDER BY
+        o.order_datetime ASC
     """
 
     result = fetch_query(query, (id,))
@@ -548,6 +552,8 @@ def get_order_item():
     
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
+
+    query += " ORDER BY o.order_datetime ASC"
 
     result = fetch_query(query, tuple(params))
 
