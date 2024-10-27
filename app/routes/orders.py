@@ -471,7 +471,7 @@ def delete_order_item():
 
     return jsonify({"code": "success", "message": "Order item deleted successfully."})
 
-@orders_blueprint.route('/orders/get-item', methods=['GET'])
+@orders_blueprint.route('/orders/items', methods=['GET'])
 def get_order_item():
     orderitem_status = request.args.get("status")
 
