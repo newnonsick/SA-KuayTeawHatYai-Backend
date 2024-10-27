@@ -488,7 +488,7 @@ def update_order_item():
 
     orderitem_status = fetch_query("SELECT orderitem_status FROM ORDER_ITEM WHERE order_item_id = %s", (order_item_id,))[0][0]
     if orderitem_status == "เปลี่ยนวัตถุดิบ":
-        
+
         order_status = fetch_query("SELECT order_status FROM ORDERS WHERE order_id = (SELECT order_id FROM ORDER_ITEM WHERE order_item_id = %s)", (order_item_id,))[0][0]
 
         query = "UPDATE ORDER_ITEM SET orderitem_status = %s WHERE order_item_id = %s"
@@ -538,13 +538,16 @@ def get_order_item():
         o.order_id,
         o.order_datetime,
         o.table_number,
-        oi.price
+        oi.price,
+        ig.ingredient_name
     FROM
         ORDER_ITEM oi
     LEFT JOIN
         MENU m ON oi.menu_name = m.name
     LEFT JOIN
         ORDERS o ON oi.order_id = o.order_id
+    LEFT JOIN
+        ORDER_INGREDIENT ig ON oi.order_item_id = ig.order_item_id
     """
 
     conditions = []
@@ -558,7 +561,7 @@ def get_order_item():
         placeholders = ", ".join(["%s"] * len(orderitem_status_ne))
         conditions.append(f"oi.orderitem_status NOT IN ({placeholders})")
         params.extend(orderitem_status_ne)
-    
+
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
 
@@ -566,23 +569,36 @@ def get_order_item():
 
     result = fetch_query(query, tuple(params))
 
-    order_items = [{
-        "order_item_id": item[0],
-        "menu": {
-            "name": item[1],
-            "category": item[6],
-            "image_url": item[7],
-            "price": float(item[8])
-        },
-        "quantity": int(item[2]),
-        "portions": item[3],
-        "extraInfo": item[4],
-        "orderitem_status": item[5],
-        "order_id": item[9],
-        "order_datetime": item[10].strftime("%Y-%m-%d %H:%M:%S"),
-        "table_number": item[11],
-        "price": float(item[12])
-    } for item in result]
+    order_items_dict = {}
+    
+    for item in result:
+        order_item_id = item[0]
+        
+        if order_item_id not in order_items_dict:
+            order_items_dict[order_item_id] = {
+                "order_item_id": order_item_id,
+                "menu": {
+                    "name": item[1],
+                    "category": item[6],
+                    "image_url": item[7],
+                    "price": float(item[8])
+                },
+                "quantity": int(item[2]),
+                "portion": item[3],
+                "extraInfo": item[4],
+                "orderitem_status": item[5],
+                "order_id": item[9],
+                "order_datetime": item[10].strftime("%Y-%m-%d %H:%M:%S"),
+                "table_number": item[11],
+                "price": float(item[12]),
+                "ingredients": []
+            }
+        
+        ingredient_name = item[13]
+        if ingredient_name and ingredient_name not in order_items_dict[order_item_id]["ingredients"]:
+            order_items_dict[order_item_id]["ingredients"].append(ingredient_name)
+
+    order_items = list(order_items_dict.values())
 
     return jsonify({"code": "success", "order_items": order_items})
     
