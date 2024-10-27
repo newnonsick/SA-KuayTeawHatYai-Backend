@@ -70,6 +70,8 @@ def get_orders():
 
     result = fetch_query(query, tuple(params))
 
+    result.reverse()
+
     orders = [{
         "order_id": item[0],
         "order_status": item[1],
@@ -347,6 +349,10 @@ def update_status_order():
     query = "UPDATE ORDERS SET order_status = %s WHERE order_id = %s"
     execute_command(query, (order_status, order_id))
 
+    if order_status == "กำลังทำอาหาร":
+        query = "UPDATE ORDER_ITEM SET orderitem_status = %s WHERE order_id = %s"
+        execute_command(query, (order_status, order_id))
+
     socketio.emit('update_order', {"order_id": order_id, "order_status": order_status})
     return jsonify({"code": "success", "message": "Order updated successfully."})
 
@@ -488,7 +494,8 @@ def get_order_item():
         m.price,
         o.order_id,
         o.order_datetime,
-        o.table_number
+        o.table_number,
+        oi.price
     FROM
         ORDER_ITEM oi
     LEFT JOIN
@@ -509,6 +516,8 @@ def get_order_item():
 
     result = fetch_query(query, tuple(params))
 
+    result.reverse()
+
     order_items = [{
         "order_item_id": item[0],
         "menu": {
@@ -523,7 +532,8 @@ def get_order_item():
         "orderitem_status": item[5],
         "order_id": item[9],
         "order_datetime": item[10].strftime("%Y-%m-%d %H:%M:%S"),
-        "table_number": item[11]
+        "table_number": item[11],
+        "price": float(item[12])
     } for item in result]
 
     return jsonify({"code": "success", "order_items": order_items})
