@@ -486,6 +486,7 @@ def delete_order_item():
 @orders_blueprint.route('/orders/items', methods=['GET'])
 def get_order_item():
     orderitem_status = request.args.get("status")
+    orderitem_status_ne = request.args.getlist("status_ne")
 
     query = """
     SELECT 
@@ -516,6 +517,11 @@ def get_order_item():
     if orderitem_status:
         conditions.append("oi.orderitem_status = %s")
         params.append(orderitem_status)
+
+    if orderitem_status_ne:
+        placeholders = ", ".join(["%s"] * len(orderitem_status_ne))
+        conditions.append(f"oi.orderitem_status NOT IN ({placeholders})")
+        params.extend(orderitem_status_ne)
     
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
