@@ -476,6 +476,9 @@ def update_order_item():
             execute_command(query, (order_item_id, ingredient))
 
     if portion:
+        if portion not in ["พิเศษ", "ธรรมดา"]:
+            raise ValueError("Invalid portion.")
+
         query = "UPDATE ORDER_ITEM SET portions = %s WHERE order_item_id = %s"
         execute_command(query, (portion, order_item_id))
 

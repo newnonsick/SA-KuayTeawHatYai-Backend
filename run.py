@@ -21,7 +21,7 @@ def handle_exception(error):
     
     if isinstance(error, ValueError):
         return jsonify({
-            "code": "Bad Request", "message": str(error)}), 400
+            "code": "Bad Request", "message": str(error)}), 200
     
     return jsonify({
         "code": "Internal Server Error", "message": "An error occurred. Please try again later."
