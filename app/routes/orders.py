@@ -74,11 +74,9 @@ def get_orders():
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
 
-    query += " ORDER BY order_datetime ASC"
+    query += " ORDER BY order_datetime DESC"
 
     result = fetch_query(query, tuple(params))
-
-    result.reverse()
 
     orders = [{
         "order_id": item[0],
@@ -289,7 +287,7 @@ def get_order(id):
     WHERE 
         o.order_id = %s
     ORDER BY
-        o.order_datetime ASC
+        o.order_datetime DESC
     """
 
     result = fetch_query(query, (id,))
@@ -553,7 +551,7 @@ def get_order_item():
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
 
-    query += " ORDER BY o.order_datetime ASC"
+    query += " ORDER BY o.order_datetime DESC"
 
     result = fetch_query(query, tuple(params))
 
