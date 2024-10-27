@@ -486,6 +486,14 @@ def update_order_item():
         query = "UPDATE ORDER_ITEM SET extra_info = %s WHERE order_item_id = %s"
         execute_command(query, (extra_info, order_item_id))
 
+    orderitem_status = fetch_query("SELECT orderitem_status FROM ORDER_ITEM WHERE order_item_id = %s", (order_item_id,))[0][0]
+    if orderitem_status == "เปลี่ยนวัตถุดิบ":
+        
+        order_status = fetch_query("SELECT order_status FROM ORDERS WHERE order_id = (SELECT order_id FROM ORDER_ITEM WHERE order_item_id = %s)", (order_item_id,))[0][0]
+
+        query = "UPDATE ORDER_ITEM SET orderitem_status = %s WHERE order_item_id = %s"
+        execute_command(query, (order_status, order_item_id))
+
     return jsonify({"code": "success", "message": "Order item updated successfully."})
 
 @orders_blueprint.route('/orders/delete-item', methods=['DELETE'])
