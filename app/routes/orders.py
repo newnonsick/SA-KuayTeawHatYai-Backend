@@ -202,7 +202,7 @@ def add_order():
 
     query = "INSERT INTO ORDERS (order_id, order_status, order_datetime, total_amount, table_number) VALUES (%s, %s, %s, %s, %s)"
 
-    execute_command(query, (order_id, "Pending", order_date, price, table_number))
+    execute_command(query, (order_id, "รอทำอาหาร", order_date, price, table_number))
 
     for order in orders:
         menu = order.get("menu")
@@ -231,7 +231,7 @@ def add_order():
             order_item_id = str(uuid.uuid4())
 
         query = "INSERT INTO ORDER_ITEM (order_item_id, menu_name, order_id, quantity, price, portions, extra_info, orderitem_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        execute_command(query, (order_item_id, menu.get("name"), order_id, quantity, price, portion, extra_info, "Pending"))
+        execute_command(query, (order_item_id, menu.get("name"), order_id, quantity, price, portion, extra_info, "รอทำอาหาร"))
 
         if ingredients:
             for ingredient in ingredients:
