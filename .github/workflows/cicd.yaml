@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Trigger deployment
         run: |
-          curl -k -X POST ${{secrets.EASY_PANEL_TRIGGER_API}}
+          curl -k -X POST ${{ secrets.EASY_PANEL_TRIGGER_API }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,4 +41,4 @@ jobs:
         run: sleep 10
       - name: Trigger deployment
         run: |
-          curl -k -X POST ${{secrets.PT_TRIGGER_API}}
+          curl -k -X POST ${{ secrets.PT_TRIGGER_API }}
