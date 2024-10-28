@@ -4,4 +4,4 @@ index_blueprint = Blueprint('index', __name__)
 
 @index_blueprint.route('/', methods=['GET'])
 def index():
-    return jsonify({"message": "Hello, World!! I Pro kak"})
+    return jsonify({"message": "Hello, World!! I Pro kak Gu Good!"})
