@@ -510,12 +510,23 @@ def delete_order_item():
     if not isOrderItemExist(order_item_id):
         raise ValueError("Order item does not exist.")
     
+    query = "SELECT order_id FROM ORDER_ITEM WHERE order_item_id = %s"
+    order_id = fetch_query(query, (order_item_id,))[0][0]
+    
     query = """
     DELETE FROM ORDER_ITEM WHERE order_item_id = %s;
 
     DELETE FROM ORDER_INGREDIENT WHERE order_item_id = %s;
     """
     execute_command(query, (order_item_id, order_item_id))
+
+    query = "SELECT COUNT(*) FROM ORDER_ITEM WHERE order_id = %s"
+    result = fetch_query(query, (order_id,))[0][0]
+
+    if result == 0:
+        query = "DELETE FROM ORDERS WHERE order_id = %s"
+        execute_command(query, (order_id,))
+
 
     return jsonify({"code": "success", "message": "Order item deleted successfully."})
 

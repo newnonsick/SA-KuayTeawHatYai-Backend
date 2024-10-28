@@ -218,4 +218,35 @@ def add_ingredients_to_menu():
     
     return jsonify({"code": "success", "message": "Ingredients added to menu successfully."})
 
+@menus_blueprint.route('/menu/remove-ingredient', methods=['DELETE'])
+def remove_ingredients_from_menu():
+    data = request.get_json()
+    menu_name = data.get("menu_name")
+    ingredients = data.get("ingredients")
+
+    if not all([menu_name, ingredients]):
+        raise ValueError("Missing required fields.")
+    
+    if not isMenuExist(menu_name):
+        raise ValueError(f"Menu item {menu_name} does not exist.")
+    
+    for ingredient in ingredients:
+        
+        # Check if ingredient exists
+        query = "SELECT * FROM INGREDIENT WHERE name = %s"
+        result = fetch_query(query, (ingredient,))
+        if not result:
+            raise ValueError(f"Ingredient {ingredient} does not exist.")
+        
+        # Check if ingredient is already added to the menu
+        query = "SELECT * FROM MENU_INGREDIENT WHERE menu_name = %s AND ingredient_name = %s"
+        result = fetch_query(query, (menu_name, ingredient))
+        if not result:
+            raise ValueError(f"Ingredient {ingredient} is not added to the menu.")
+
+        query = "DELETE FROM MENU_INGREDIENT WHERE menu_name = %s AND ingredient_name = %s"
+        result = execute_command(query, (menu_name, ingredient))
+    
+    return jsonify({"code": "success", "message": "Ingredients removed from menu successfully."})
+
     
