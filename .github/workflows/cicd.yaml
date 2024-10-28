@@ -29,7 +29,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy-easy
     steps:
       - name: Tailscale
         uses: tailscale/github-action@v2
