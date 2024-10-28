@@ -13,7 +13,7 @@ def validate_ingredient(data):
     image_url = data.get("image_url")
     ingredient_type = data.get("ingredient_type")
 
-    if not all([name, is_available, image_url, ingredient_type]):
+    if not all([name, is_available in [True, False], image_url, ingredient_type]):
         raise ValueError("Missing required fields.")
     
     if not isinstance(is_available, bool):
@@ -32,7 +32,7 @@ def isIngredientExist(name):
 
 @ingredients_blueprint.route('/ingredients', methods=['GET'])
 def get_ingredients():
-    query = "SELECT * FROM INGREDIENT"
+    query = "SELECT * FROM INGREDIENT ORDER BY ingredient_type"
     result = fetch_query(query)
     
     ingredients = [{
