@@ -22,8 +22,8 @@ Before you begin, ensure you have the following installed on your local machine:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/KuayTeawHatYai/KuayTeawHatYai-Backend.git
-cd KuayTeawHatYai-Backend
+git clone https://github.com/newnonsick/SA-KuayTeawHatYai-Backend.git
+cd SA-KuayTeawHatYai-Backend
 ```
 
 ### 2. Set Up a Virtual Environment (Optional but recommended)
@@ -45,6 +45,7 @@ POSTGRES_PASSWORD=your_postgres_password
 POSTGRES_DB=your_database_name
 POSTGRES_HOST=your_postgres_host
 POSTGRES_PORT=your_postgres_port
+PORT=app_port
 ```
 
 ### 5. Set Up the Database
