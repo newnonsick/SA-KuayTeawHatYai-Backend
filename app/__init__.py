@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_socketio import SocketIO
+from werkzeug.exceptions import HTTPException
 from app.utils import verify_token
 from .config import Config
 from .db import init_db
@@ -43,21 +44,43 @@ def create_app():
     from .routes.income import income_blueprint
     app.register_blueprint(income_blueprint)
 
-    # รอทุกอย่างเรียบร้อยแล้ว ค่อยใช้
-    # @app.before_request
-    # def authenticate_request():
-    #     """ตรวจสอบ Token ก่อนดำเนินการทุก Request"""
-    #     exempt_routes = ['/']
+    @app.before_request
+    def authenticate_request():
+        """ตรวจสอบ Token ก่อนดำเนินการทุก Request"""
+        exempt_routes = ['/']
 
-    #     if request.path in exempt_routes:
-    #         return
+        if request.path in exempt_routes:
+            return
 
-    #     token = request.headers.get("Authorization")
+        token = request.headers.get("Authorization")
 
-    #     if not token:
-    #         raise ValueError("Missing token or client ID")
+        if not token:
+            raise ValueError("Missing token authorization")
 
-    #     if not verify_token(token):
-    #         raise ValueError("Invalid or expired token")
+        if not verify_token(token):
+            raise ValueError("Invalid or expired token")
+        
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(error):
+        response = error.get_response()
+        response.data = jsonify({
+            "code": error.code,
+            "name": error.name,
+            "description": error.description,
+        }).get_data(as_text=True)
+        response.content_type = "application/json"
+        return response
+
+    @app.errorhandler(Exception)
+    def handle_exception(error):
+        print(f"An error occurred: {str(error)}")
+        
+        if isinstance(error, ValueError):
+            return jsonify({
+                "code": "Bad Request", "message": str(error)}), 200
+        
+        return jsonify({
+            "code": "Internal Server Error", "message": "An error occurred. Please try again later."
+        }), 500
 
     return app
