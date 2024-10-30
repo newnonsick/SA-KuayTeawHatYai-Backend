@@ -206,7 +206,7 @@ def add_order():
         
         order_id = str(uuid.uuid4())
 
-    order_date = datetime.datetime.now()
+    order_date = datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=7))).strftime("%Y-%m-%d %H:%M:%S")
 
     query = "INSERT INTO ORDERS (order_id, order_status, order_datetime, total_amount, table_number) VALUES (%s, %s, %s, %s, %s)"
 
