@@ -8,24 +8,14 @@ from app.utils import verify_token
 from .config import Config
 from .db import init_db
 
-socketio = SocketIO(
-    cors_allowed_origins=[
-        "https://kuayteawhatyai.vercel.app",
-        "http://localhost",
-        "http://127.0.0.1",
-    ]
-)
+socketio = SocketIO(cors_allowed_origins="*")
 
 
 def create_app():
     app = Flask(__name__)
     CORS(
         app,
-        origins=[
-            "https://kuayteawhatyai.vercel.app",
-            "http://localhost",
-            "http://127.0.0.1",
-        ],
+        resources={"*": {"origins": "*"}},
     )
 
     app.config.from_object(Config)
