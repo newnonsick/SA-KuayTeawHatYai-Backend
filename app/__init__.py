@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, make_response, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from werkzeug.exceptions import HTTPException
@@ -13,15 +13,20 @@ socketio = SocketIO(cors_allowed_origins="*")
 
 def create_app():
     app = Flask(__name__)
-    # CORS(
-    #     app,
-    #     resources={"*": {"origins": "*"}},
-    # )
+
+    # Enable CORS
+    CORS(
+        app,
+        resources={"*": {"origins": "*"}},
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    )
 
     app.config.from_object(Config)
 
     # Initialize SocketIO
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
 
     from . import socket_service
 
@@ -59,17 +64,15 @@ def create_app():
 
     @app.before_request
     def authenticate_request():
-        """ตรวจสอบ Token ก่อนดำเนินการทุก Request"""
+        """Verify token before processing every request"""
         exempt_routes = ["/"]
 
-        if request.path in exempt_routes:
+        if request.path in exempt_routes or request.method == "OPTIONS":
             return
 
         token = request.headers.get("Authorization")
-
         if not token:
             raise ValueError("Missing token authorization")
-
         if not verify_token(token):
             raise ValueError("Invalid or expired token")
 
